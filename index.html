@@ -2,13 +2,17 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kirjaus</title>
+<title>Syöttö</title>
 
 <style>
 body {
   font-family: Arial;
   text-align: center;
   padding: 25px;
+}
+
+h2 {
+  margin-bottom: 10px;
 }
 
 input {
@@ -40,15 +44,16 @@ input {
 }
 
 #status {
-  margin-top: 10px;
+  margin-top: 15px;
   font-weight: bold;
+  font-size: 18px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Kirjaus</h2>
+<h2>Syöttö</h2>
 
 <input id="user" placeholder="tunnus"><br>
 <input id="pass" type="password" placeholder="salasana">
@@ -63,8 +68,8 @@ input {
   <button onclick="choose(100, this)">100</button>
 </div>
 
-<p>Määrä:</p>
-<input id="custom" type="number" placeholder="esim. 50">
+<p>Oma arvo:</p>
+<input id="custom" type="number" placeholder="esim. 42">
 
 <br>
 <button class="submit" onclick="send()">Lähetä</button>
@@ -72,17 +77,17 @@ input {
 <p id="status"></p>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbwvucVK0t6iTdHglYI1OyOG8WlywWJeH-z4tG28bzADUkKws0MrRkJXK-zK6pK5oxXvGA/exec"; // 🔥 vaihda
+const URL = "https://script.google.com/macros/s/AKfycbwvucVK0t6iTdHglYI1OyOG8WlywWJeH-z4tG28bzADUkKws0MrRkJXK-zK6pK5oxXvGA/exec"; // 🔥 vaihda tähän
 
 let selectedValue = "";
 
-// aika
+// ✅ kellonaika
 setInterval(() => {
   document.getElementById("time").innerText =
     "Aika: " + new Date().toLocaleString();
 }, 1000);
 
-// valinta
+// ✅ nappivalinta
 function choose(val, btn) {
   selectedValue = val;
 
@@ -94,14 +99,14 @@ function choose(val, btn) {
   console.log("VALITTU:", selectedValue);
 }
 
-// status
+// ✅ status helper
 function setStatus(txt, color) {
   const el = document.getElementById("status");
   el.innerText = txt;
   el.style.color = color;
 }
 
-// lähetys
+// ✅ lähetys
 function send() {
 
   const user = document.getElementById("user").value.trim();
@@ -109,7 +114,7 @@ function send() {
   const custom = document.getElementById("custom").value.trim();
 
   if (!selectedValue) {
-    setStatus("⚠️ valitse 25 / 50 / 100", "red");
+    setStatus("⚠️ valitse arvo", "red");
     return;
   }
 
@@ -118,7 +123,7 @@ function send() {
     return;
   }
 
-  console.log("SEND:", {
+  console.log("LÄHETETÄÄN:", {
     preset: selectedValue,
     custom: custom
   });
@@ -131,32 +136,28 @@ function send() {
     body:
       "user=" + encodeURIComponent(user) +
       "&pass=" + encodeURIComponent(pass) +
-      "&preset=" + encodeURIComponent(selectedValue) + // 🔥 nappi
-      "&custom=" + encodeURIComponent(custom) +       // 🔥 oma arvo
+      "&preset=" + encodeURIComponent(selectedValue) +
+      "&custom=" + encodeURIComponent(custom) +
       "&time=" + encodeURIComponent(new Date().toISOString())
   })
   .then(r => r.text())
   .then(txt => {
     txt = txt.trim();
 
-  if (txt.startsWith("ERROR")) {
-    setStatus("❌ " + txt, "red");
-  } else {
-    setStatus("✅ Tallennettu " + selectedValue + " / " + custom );
-  }
+    console.log("SERVER:", txt);
+
+    if (txt.startsWith("ERROR")) {
+      setStatus("❌ " + txt, "red");
+    } else {
+
+      // ✅ juuri tämä mitä halusit
+      setStatus(
+        "✅ Tallennettu " +
+        selectedValue +
+        (custom ? " / " + custom : ""),
+        "green"
+      );
 
       // reset UI
       selectedValue = "";
       document.getElementById("custom").value = "";
-      document.querySelectorAll(".buttons button")
-        .forEach(b => b.classList.remove("selected"));
-    }
-  })
-  .catch(err => {
-    setStatus("❌ " + err.message, "red");
-  });
-}
-</script>
-
-</body>
-</html>
