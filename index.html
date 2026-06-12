@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kirjaus9</title>
+<title>Syöttö</title>
 
 <style>
 body {
@@ -53,7 +53,7 @@ input {
 
 <body>
 
-<h2>Kirjaus9</h2>
+<h2>Syöttö</h2>
 
 <input id="user" placeholder="tunnus"><br>
 <input id="pass" type="password" placeholder="salasana">
@@ -63,9 +63,9 @@ input {
 <p>Valitse:</p>
 
 <div class="buttons">
-  <button onclick="choose(25, this)">25</button>
-  <button onclick="choose(50, this)">50</button>
-  <button onclick="choose(100, this)">100</button>
+  <button type="button" onclick="choose(25, this)">25</button>
+  <button type="button" onclick="choose(50, this)">50</button>
+  <button type="button" onclick="choose(100, this)">100</button>
 </div>
 
 <p>Oma arvo:</p>
@@ -77,17 +77,17 @@ input {
 <p id="status"></p>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbyU-_3FjJo2waCmGhMcLnQrYTIaxut8I6n8h75i_cwa4A0gR5rsQeeK030d_ippR10EnA/exec"; // 🔥 vaihda tähän
+const URL = "SUN_APPS_SCRIPT_URL"; // 🔥 vaihda tähän
 
 let selectedValue = "";
 
-// ✅ kellonaika
+// aika
 setInterval(() => {
   document.getElementById("time").innerText =
     "Aika: " + new Date().toLocaleString();
 }, 1000);
 
-// ✅ nappivalinta
+// valinta
 function choose(val, btn) {
   selectedValue = val;
 
@@ -95,18 +95,16 @@ function choose(val, btn) {
     .forEach(b => b.classList.remove("selected"));
 
   btn.classList.add("selected");
-
-  console.log("VALITTU:", selectedValue);
 }
 
-// ✅ status helper
+// status
 function setStatus(txt, color) {
   const el = document.getElementById("status");
   el.innerText = txt;
   el.style.color = color;
 }
 
-// ✅ lähetys
+// lähetys
 function send() {
 
   const user = document.getElementById("user").value.trim();
@@ -122,11 +120,6 @@ function send() {
     setStatus("⚠️ anna tunnus ja salasana", "red");
     return;
   }
-
-  console.log("LÄHETETÄÄN:", {
-    preset: selectedValue,
-    custom: custom
-  });
 
   fetch(URL, {
     method: "POST",
@@ -144,18 +137,23 @@ function send() {
   .then(txt => {
     txt = txt.trim();
 
-    console.log("SERVER:", txt);
-
     if (txt.startsWith("ERROR")) {
       setStatus("❌ " + txt, "red");
     } else {
+      setStatus("✅ Tallennettu", "green");
 
-      // ✅ juuri tämä mitä halusit
-      setStatus(
-        "✅ Tallennettu " +
-        selectedValue + " / " +
-        custom   );
-    }
-      // reset UI
+      // reset
       selectedValue = "";
       document.getElementById("custom").value = "";
+      document.querySelectorAll(".buttons button")
+        .forEach(b => b.classList.remove("selected"));
+    }
+  })
+  .catch(() => {
+    setStatus("❌ yhteysvirhe", "red");
+  });
+}
+</script>
+
+</body>
+</html>
