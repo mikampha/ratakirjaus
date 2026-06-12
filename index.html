@@ -142,13 +142,7 @@ function send() {
   if (txt.startsWith("ERROR")) {
     setStatus("❌ " + txt, "red");
   } else {
-    setStatus(
-      "✅ Tallennettu " +
-      selectedValue +
-      " / " +
-      (custom || "-"),
-      "green"
-  );
+    setStatus("✅ Tallennettu " + selectedValue + " / " + (custom || "-"),"green");
   }
 
       // reset UI
