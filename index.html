@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kirjaus6</title>
+<title>Kirjaus9</title>
 
 <style>
 body {
@@ -53,7 +53,7 @@ input {
 
 <body>
 
-<h2>Kirjaus6</h2>
+<h2>Kirjaus9</h2>
 
 <input id="user" placeholder="tunnus"><br>
 <input id="pass" type="password" placeholder="salasana">
@@ -153,11 +153,9 @@ function send() {
       // ✅ juuri tämä mitä halusit
       setStatus(
         "✅ Tallennettu " +
-        selectedValue +
-        (custom ? " / " + custom : ""),
-        "green"
-      );
-
+        selectedValue + " / " +
+        custom   );
+    }
       // reset UI
       selectedValue = "";
       document.getElementById("custom").value = "";
