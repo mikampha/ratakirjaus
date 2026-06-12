@@ -1,12 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mun appi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Syöttö</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 40px;
+    }
+
+    button {
+      font-size: 24px;
+      padding: 20px;
+      margin: 10px;
+      width: 120px;
+    }
+
+    input {
+      font-size: 20px;
+      padding: 10px;
+      width: 200px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>✅ Toimii!</h1>
-<p>Mun eka GitHub appi</p>
+<h2>Valitse tai syötä</h2>
+
+<!-- napit -->
+<button onclick="send(25)">25</button>
+<button onclick="send(50)">50</button>
+<button onclick="send(100)">100</button>
+
+<br><br>
+
+<!-- oma arvo -->
+<input id="custom" placeholder="oma arvo">
+<br><br>
+<button onclick="sendCustom()">Lähetä</button>
+
+<p id="status"></p>
+
+<script>
+  const URL = "https://script.google.com/macros/s/AKfycbwb32UyKkM7oIkZLODUb9gh0m3I3H2eo15Wqe2q0LCfLAd2zrfkOt3SVmdumpj-whuelg/exec"; // <-- vaihda tämä
+
+  function send(value) {
+    post(value);
+  }
+
+  function sendCustom() {
+    const value = document.getElementById("custom").value;
+    post(value);
+  }
+
+  function post(value) {
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: "value=" + encodeURIComponent(value)
+    })
+    .then(r => r.text())
+    .then(() => {
+      document.getElementById("status").innerText = "✅ Tallennettu";
+    })
+    .catch(() => {
+      document.getElementById("status").innerText = "❌ Virhe";
+    });
+  }
+</script>
 
 </body>
 </html>
