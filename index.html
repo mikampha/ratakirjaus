@@ -151,10 +151,18 @@
         "&value=" + encodeURIComponent(value) +
         "&time=" + encodeURIComponent(now)
     })
-    .then(r => r.text())
-    .then(() => {
-      document.getElementById("status").innerText =
-        "✅ Tallennettu";
+.then(r => r.text())
+.then(txt => {
+
+  if (txt.startsWith("ERROR")) {
+    document.getElementById("status").innerText = "❌ " + txt;
+    document.getElementById("status").style.color = "red";
+  } else {
+    document.getElementById("status").innerText = "✅ Tallennettu";
+    document.getElementById("status").style.color = "green";
+  }
+
+})
 
       document.getElementById("custom").value = "";
 
