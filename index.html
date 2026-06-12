@@ -97,11 +97,14 @@ function choose(val, btn) {
   btn.classList.add("selected");
 }
 
-// status
-function setStatus(txt, color) {
-  const el = document.getElementById("status");
-  el.innerText = txt;
-  el.style.color = color;
+function setStatus(text, color, preset, custom) {
+  const statusEl = document.getElementById("status");
+
+  statusEl.innerHTML = `
+    <span style="color:${color}">${text}</span><br>
+    preset: ${preset}<br>
+    custom: ${custom}
+  `;
 }
 
 // lähetys
@@ -138,9 +141,9 @@ function send() {
     txt = txt.trim();
 
     if (txt.startsWith("ERROR")) {
-      setStatus("❌ " + txt, "red");
+      setStatus("❌ " + txt, "red", "-", "-");
     } else {
-      setStatus("✅ Tallennettu", "green");
+      setStatus("✅ Tallennettu", "green", selectedValue, custom);
 
       // reset
       selectedValue = "";
