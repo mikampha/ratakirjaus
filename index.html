@@ -3,68 +3,129 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Syöttö</title>
+
   <style>
     body {
       font-family: Arial;
       text-align: center;
-      padding: 40px;
+      padding: 30px;
     }
 
-    button {
-      font-size: 24px;
-      padding: 20px;
-      margin: 10px;
-      width: 120px;
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .buttons button {
+      font-size: 20px;
+      padding: 15px;
+      margin: 5px;
+      width: 100px;
+      border: none;
+      background: #ddd;
+    }
+
+    .buttons button.selected {
+      background: #4CAF50;
+      color: white;
     }
 
     input {
-      font-size: 20px;
+      font-size: 18px;
       padding: 10px;
       width: 200px;
+      margin-top: 10px;
+    }
+
+    .submit {
+      margin-top: 20px;
+      font-size: 22px;
+      padding: 15px 30px;
+    }
+
+    .time {
+      margin-bottom: 15px;
+      font-size: 18px;
     }
   </style>
 </head>
+
 <body>
 
-<h2>Valitse tai syötä</h2>
+<h2>Syöttö</h2>
 
-<!-- napit -->
-<button onclick="send(25)">25</button>
-<button onclick="send(50)">50</button>
-<button onclick="send(100)">100</button>
+<!-- aika -->
+<div class="time" id="time"></div>
 
-<br><br>
+<!-- valinta -->
+<p>Valitse:</p>
+<div class="buttons">
+  <button onclick="selectVal(25)">25</button>
+  <button onclick="selectVal(50)">50</button>
+  <button onclick="selectVal(100)">100</button>
+</div>
 
 <!-- oma arvo -->
-<input id="custom" placeholder="oma arvo">
-<br><br>
-<button onclick="sendCustom()">Lähetä</button>
+<p>Oma arvo:</p>
+<input id="custom" type="number" placeholder="esim. 42">
+
+<br>
+
+<button class="submit" onclick="submit()">Lähetä</button>
 
 <p id="status"></p>
 
 <script>
-  const URL = "https://script.google.com/macros/s/AKfycbwb32UyKkM7oIkZLODUb9gh0m3I3H2eo15Wqe2q0LCfLAd2zrfkOt3SVmdumpj-whuelg/exec"; // <-- vaihda tämä
+  const URL = "https://script.google.com/macros/s/AKfycbwb32UyKkM7oIkZLODUb9gh0m3I3H2eo15Wqe2q0LCfLAd2zrfkOt3SVmdumpj-whuelg/exec"; // vaihda tämä!
 
-  function send(value) {
-    post(value);
+  let selected = "";
+
+  // 🔘 valinta
+  function selectVal(val) {
+    selected = val;
+
+    document.querySelectorAll(".buttons button").forEach(btn => {
+      btn.classList.remove("selected");
+    });
+
+    event.target.classList.add("selected");
   }
 
-  function sendCustom() {
-    const value = document.getElementById("custom").value;
-    post(value);
+  // 🕒 aika
+  function updateTime() {
+    const now = new Date();
+    document.getElementById("time").innerText =
+      "Aika: " + now.toLocaleString();
   }
 
-  function post(value) {
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // 🚀 lähetys
+  function submit() {
+    const custom = document.getElementById("custom").value;
+
+    const value = custom || selected;
+
+    if (!value) {
+      document.getElementById("status").innerText = "Valitse tai syötä arvo";
+      return;
+    }
+
+    const now = new Date().toISOString();
+
     fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: "value=" + encodeURIComponent(value)
+      body:
+        "value=" + encodeURIComponent(value) +
+        "&time=" + encodeURIComponent(now)
     })
     .then(r => r.text())
     .then(() => {
       document.getElementById("status").innerText = "✅ Tallennettu";
+      document.getElementById("custom").value = "";
     })
     .catch(() => {
       document.getElementById("status").innerText = "❌ Virhe";
