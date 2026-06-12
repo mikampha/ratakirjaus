@@ -2,17 +2,13 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ratakirjaus</title>
+  <title>Syöttö</title>
 
   <style>
     body {
       font-family: Arial;
       text-align: center;
       padding: 20px;
-    }
-
-    h2 {
-      margin-bottom: 10px;
     }
 
     input {
@@ -27,30 +23,26 @@
       padding: 15px;
       margin: 5px;
       width: 100px;
-      border: none;
       background: #ddd;
+      border: none;
       border-radius: 6px;
     }
 
-    .buttons button.selected {
-      background: #4CAF50;
+    .selected {
+      background: #4CAF50 !important;
       color: white;
     }
 
-    .time {
-      margin: 10px;
-      font-size: 18px;
-    }
-
     .submit {
-      margin-top: 15px;
       font-size: 22px;
-      padding: 15px 30px;
+      padding: 15px;
+      margin-top: 15px;
     }
 
     #status {
       margin-top: 10px;
       font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -59,127 +51,118 @@
 
 <h2>Syöttö</h2>
 
-<!-- käyttäjä -->
-<p>Käyttäjä:</p>
 <input id="username" placeholder="tunnus">
-
-<p>Salasana:</p>
+<br>
 <input id="password" type="password" placeholder="salasana">
 
-<!-- aika -->
-<div class="time" id="time"></div>
+<p id="time"></p>
 
-<!-- valinta -->
 <p>Valitse:</p>
 <div class="buttons">
-  <button onclick="selectVal(25, event)">25</button>
-  <button onclick="selectVal(50, event)">50</button>
-  <button onclick="selectVal(100, event)">100</button>
+  <button id="b25">25</button>
+  <button id="b50">50</button>
+  <button id="b100">100</button>
 </div>
 
-<!-- oma arvo -->
 <p>Oma arvo:</p>
-<input id="custom" type="number" placeholder="esim. 42">
+<input id="custom" type="number">
 
 <br>
-
 <button class="submit" onclick="submitForm()">Lähetä</button>
 
 <p id="status"></p>
 
 <script>
-  const URL = "https://script.google.com/macros/s/AKfycbyETl-FhlWCsI6e_oktH8hD_mnRD21BU8niWDaoA7XSdTPmZn96AjB_5CveY9_IyfH7ZA/exec"; // 🔥 VAIHDA TÄMÄ
+const URL = "SUN_APPS_SCRIPT_URL"; // 🔥 VAIHDA
 
-  let selected = "";
+let selected = "";
 
-  // 🔐 muista username selaimessa
-  window.onload = function() {
-    const savedUser = localStorage.getItem("username");
-    if (savedUser) {
-      document.getElementById("username").value = savedUser;
-    }
-  };
+// ✅ load user
+window.onload = function() {
+  const saved = localStorage.getItem("username");
+  if (saved) document.getElementById("username").value = saved;
+};
 
-  // 🔘 nappivalinta
-  function selectVal(val, e) {
-    selected = val;
+// ✅ button handlers (EI event-parametria)
+document.getElementById("b25").onclick = () => selectVal(25, "b25");
+document.getElementById("b50").onclick = () => selectVal(50, "b50");
+document.getElementById("b100").onclick = () => selectVal(100, "b100");
 
-    document.querySelectorAll(".buttons button").forEach(btn => {
-      btn.classList.remove("selected");
-    });
+function selectVal(val, id) {
+  selected = val;
 
-    e.target.classList.add("selected");
+  ["b25","b50","b100"].forEach(x => {
+    document.getElementById(x).classList.remove("selected");
+  });
+
+  document.getElementById(id).classList.add("selected");
+}
+
+// ✅ time
+function updateTime() {
+  document.getElementById("time").innerText =
+    "Aika: " + new Date().toLocaleString();
+}
+
+updateTime();
+setInterval(updateTime, 1000);
+
+// ✅ submit
+function submitForm() {
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
+  const custom = document.getElementById("custom").value;
+
+  const value = custom || selected;
+
+  if (!value) {
+    setStatus("⚠️ valitse arvo", "red");
+    return;
   }
 
-  // 🕒 kellonaika
-  function updateTime() {
-    const now = new Date();
-    document.getElementById("time").innerText =
-      "Aika: " + now.toLocaleString();
-  }
+  localStorage.setItem("username", u);
 
-  updateTime();
-  setInterval(updateTime, 1000);
+  fetch(URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body:
+      "user=" + encodeURIComponent(u) +
+      "&pass=" + encodeURIComponent(p) +
+      "&value=" + encodeURIComponent(value) +
+      "&time=" + encodeURIComponent(new Date().toISOString())
+  })
+  .then(r => r.text())
+  .then(txt => {
 
-  // 🚀 submit
-  function submitForm() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const custom = document.getElementById("custom").value;
+    console.log("Server:", txt);
 
-    const value = custom || selected;
-
-    if (!value) {
-      document.getElementById("status").innerText =
-        "⚠️ Valitse tai syötä arvo";
-      return;
-    }
-
-    // ✅ tallenna käyttäjä selaimeen
-    localStorage.setItem("username", username);
-
-    const now = new Date().toISOString();
-
-    fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body:
-        "user=" + encodeURIComponent(username) +
-        "&pass=" + encodeURIComponent(password) +
-        "&value=" + encodeURIComponent(value) +
-        "&time=" + encodeURIComponent(now)
-    })
-.then(r => r.text())
-.then(txt => {
-
-  if (txt.startsWith("ERROR")) {
-    document.getElementById("status").innerText = "❌ " + txt;
-    document.getElementById("status").style.color = "red";
-  } else {
-    document.getElementById("status").innerText = "✅ Tallennettu";
-    document.getElementById("status").style.color = "green";
-  }
-
-})
+    if (txt.startsWith("ERROR")) {
+      setStatus("❌ " + txt, "red");
+    } else {
+      setStatus("✅ Tallennettu", "green");
 
       document.getElementById("custom").value = "";
-
-      // poistetaan valinta UI:sta
-      document.querySelectorAll(".buttons button").forEach(btn => {
-        btn.classList.remove("selected");
-      });
-
       selected = "";
-    })
-    .catch(() => {
-      document.getElementById("status").innerText =
-        "❌ Virhe lähetyksessä";
-    });
-  }
+      ["b25","b50","b100"].forEach(x =>
+        document.getElementById(x).classList.remove("selected")
+      );
+    }
+
+  })
+  .catch(err => {
+    console.error(err);
+    setStatus("❌ verkko- tai URL-virhe", "red");
+  });
+}
+
+function setStatus(text, color) {
+  const s = document.getElementById("status");
+  s.innerText = text;
+  s.style.color = color;
+}
 </script>
 
 </body>
 </html>
-
