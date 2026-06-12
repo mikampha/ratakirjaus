@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ratakirjaus4</title>
+  <title>Ratakirjaus5</title>
 
   <style>
     body {
@@ -49,7 +49,7 @@
 
 <body>
 
-<h2>Ratakirjaus4</h2>
+<h2>Ratakirjaus5</h2>
 
 <input id="username" placeholder="tunnus"><br>
 <input id="password" type="password" placeholder="salasana"><br>
@@ -120,6 +120,13 @@ function submitForm() {
   const custom = document.getElementById("custom").value;
 
   const customVal = custom.trim();
+
+  // 🔥 etsitään valittu nappi DOM:ista
+  let selectedButton = document.querySelector(".buttons .selected");
+  let selectedValue = selectedButton ? selectedButton.innerText : "";
+  
+  // ✅ lopullinen arvo
+  const value = customVal !== "" ? customVal : selectedValue;
   const value = customVal !== "" ? customVal : selected;
 
   if (!value) {
