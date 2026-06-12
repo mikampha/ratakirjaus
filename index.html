@@ -68,7 +68,7 @@ input {
   <button type="button" onclick="choose(100, this)">100</button>
 </div>
 
-<p>Oma arvo:</p>
+<p>Määrä:</p>
 <input id="custom" type="number" placeholder="esim. 42">
 
 <br>
@@ -102,8 +102,8 @@ function setStatus(text, color, preset, custom) {
 
   statusEl.innerHTML = `
     <span style="color:${color}">${text}</span><br>
-    preset: ${preset}<br>
-    custom: ${custom}
+    Matka: ${preset}<br>
+    Määrä: ${custom}
   `;
 }
 
