@@ -138,10 +138,18 @@ function submitForm() {
 
     console.log("Server:", txt);
 
-    if (txt.startsWith("ERROR")) {
-      setStatus("❌ " + txt, "red");
-    } else {
-      setStatus("✅ Tallennettu", "green");
+    .then(txt => {
+
+  txt = txt.trim(); // 🔥 tärkein rivi
+
+  if (txt.startsWith("ERROR")) {
+    setStatus("❌ " + txt, "red");
+  } else {
+    setStatus("✅ Tallennettu", "green");
+  }
+
+})
+
 
       document.getElementById("custom").value = "";
       selected = "";
