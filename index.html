@@ -2,24 +2,20 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kirjaus7</title>
+<title>Syöttö</title>
 
 <style>
 body {
   font-family: Arial;
   text-align: center;
-  padding: 25px;
-}
-
-h2 {
-  margin-bottom: 15px;
+  padding: 20px;
 }
 
 input {
   font-size: 18px;
   padding: 10px;
   width: 220px;
-  margin: 5px;
+  margin: 6px;
 }
 
 .buttons button {
@@ -32,14 +28,9 @@ input {
   background: #ddd;
 }
 
-.buttons button.selected {
-  background: #4CAF50;
+.selected {
+  background: #4CAF50 !important;
   color: white;
-}
-
-.time {
-  margin: 10px;
-  font-size: 18px;
 }
 
 .submit {
@@ -51,29 +42,28 @@ input {
 #status {
   margin-top: 10px;
   font-weight: bold;
+  white-space: pre-line;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Kirjaus7</h2>
+<h2>Syöttö</h2>
 
 <input id="user" placeholder="tunnus"><br>
 <input id="pass" type="password" placeholder="salasana">
 
-<div class="time" id="time"></div>
-
-<p>Valitse:</p>
+<p id="time"></p>
 
 <div class="buttons">
-  <button onclick="choose(25, this)">25</button>
-  <button onclick="choose(50, this)">50</button>
-  <button onclick="choose(100, this)">100</button>
+  <button id="b25">25</button>
+  <button id="b50">50</button>
+  <button id="b100">100</button>
 </div>
 
-<p>Oma arvo:</p>
-<input id="custom" type="number" placeholder="esim. 42">
+<br>
+<input id="custom" placeholder="oma arvo">
 
 <br>
 <button class="submit" onclick="send()">Lähetä</button>
@@ -81,104 +71,96 @@ input {
 <p id="status"></p>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbz-pe2H0GF4Gnjsr8HnkVf4sx3lEI8K5yiWq9AGczKJF1l-IsulCBelkkSiuPeWarpcZQ/exec"; // 🔥 vaihda
+const URL = "https://script.google.com/macros/s/AKfycbz-pe2H0GF4Gnjsr8HnkVf4sx3lEI8K5yiWq9AGczKJF1l-IsulCBelkkSiuPeWarpcZQ/exec"; // 🔥 vaihda tämä
 
 let selectedValue = "";
 
-// ✅ muista käyttäjä
-window.onload = function() {
-  const saved = localStorage.getItem("username");
-  if (saved) document.getElementById("user").value = saved;
-};
-
-// ✅ kellonaika
-function updateTime() {
+// aika
+setInterval(() => {
   document.getElementById("time").innerText =
     "Aika: " + new Date().toLocaleString();
-}
-updateTime();
-setInterval(updateTime, 1000);
+}, 1000);
 
-// ✅ valinta
-function choose(val, btn) {
+// napit
+document.getElementById("b25").onclick = () => choose(25, "b25");
+document.getElementById("b50").onclick = () => choose(50, "b50");
+document.getElementById("b100").onclick = () => choose(100, "b100");
+
+function choose(val, id) {
   selectedValue = val;
 
-  document.querySelectorAll(".buttons button")
-    .forEach(b => b.classList.remove("selected"));
+  ["b25","b50","b100"].forEach(x =>
+    document.getElementById(x).classList.remove("selected")
+  );
 
-  btn.classList.add("selected");
+  document.getElementById(id).classList.add("selected");
 
   console.log("VALITTU:", selectedValue);
 }
 
-// ✅ status
-function setStatus(txt, color) {
+function setStatus(text, color) {
   const el = document.getElementById("status");
-  el.innerText = txt;
+  el.innerText = text;
   el.style.color = color;
 }
 
-// ✅ lähetys
-function send() {
+// 🚀 lähetys (DEBUG-versio)
+async function send() {
 
-  const user = document.getElementById("user").value.trim();
-  const pass = document.getElementById("pass").value.trim();
-  const custom = document.getElementById("custom").value.trim();
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+  const custom = document.getElementById("custom").value;
 
-  let value = "";
-
-  if (custom !== "") {
-    value = custom;
-  } else {
-    value = selectedValue;
-  }
-
-  console.log("LÄHETETÄÄN:", value);
+  let value = custom !== "" ? custom : selectedValue;
 
   if (!value) {
-    setStatus("⚠️ valitse tai syötä arvo", "red");
+    setStatus("⚠️ Valitse arvo", "red");
     return;
   }
 
-  if (!user || !pass) {
-    setStatus("⚠️ anna tunnus ja salasana", "red");
-    return;
-  }
+  try {
 
-  localStorage.setItem("username", user);
+    console.log("📤 Lähetetään:", {user, pass, value});
 
-  fetch(URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body:
-      "user=" + encodeURIComponent(user) +
-      "&pass=" + encodeURIComponent(pass) +
-      "&value=" + encodeURIComponent(value) +
-      "&time=" + encodeURIComponent(new Date().toISOString())
-  })
-  .then(r => r.text())
-  .then(txt => {
-    txt = txt.trim();
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body:
+        "user=" + encodeURIComponent(user) +
+        "&pass=" + encodeURIComponent(pass) +
+        "&value=" + encodeURIComponent(value) +
+        "&time=" + encodeURIComponent(new Date().toISOString())
+    });
 
-    console.log("SERVER:", txt);
+    console.log("📡 HTTP status:", response.status);
 
-    if (txt.startsWith("ERROR")) {
-      setStatus("❌ " + txt, "red");
-    } else {
-      setStatus("✅ Tallennettu", "green");
+    const text = (await response.text()).trim();
 
-      // reset
-      selectedValue = "";
-      document.getElementById("custom").value = "";
-      document.querySelectorAll(".buttons button")
-        .forEach(b => b.classList.remove("selected"));
+    console.log("📥 Server response:", text);
+
+    if (!response.ok) {
+      throw new Error("HTTP virhe: " + response.status);
     }
-  })
-  .catch(() => {
-    setStatus("❌ yhteysvirhe", "red");
-  });
+
+    if (text.startsWith("ERROR")) {
+      setStatus("❌ " + text, "red");
+    } else {
+      setStatus("✅ Tallennettu\n" + text, "green");
+    }
+
+  } catch (err) {
+
+    console.error("🔥 FETCH ERROR:", err);
+
+    setStatus(
+      "❌ VIRHE:\n" +
+      err.message +
+      "\n\nKatso console (F12)",
+      "red"
+    );
+  }
 }
 </script>
 
