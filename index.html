@@ -15,7 +15,7 @@
       font-size: 18px;
       padding: 10px;
       width: 220px;
-      margin: 6px;
+      margin: 5px;
     }
 
     .buttons button {
@@ -49,11 +49,10 @@
 
 <body>
 
-<h2>Kirjaus1</h2>
+<h2>Syöttö</h2>
 
-<input id="username" placeholder="tunnus">
-<br>
-<input id="password" type="password" placeholder="salasana">
+<input id="username" placeholder="tunnus"><br>
+<input id="password" type="password" placeholder="salasana"><br>
 
 <p id="time"></p>
 
@@ -73,17 +72,17 @@
 <p id="status"></p>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbyETl-FhlWCsI6e_oktH8hD_mnRD21BU8niWDaoA7XSdTPmZn96AjB_5CveY9_IyfH7ZA/exec"; // 🔥 VAIHDA
+const URL = "https://script.google.com/macros/s/AKfycbyETl-FhlWCsI6e_oktH8hD_mnRD21BU8niWDaoA7XSdTPmZn96AjB_5CveY9_IyfH7ZA/exec"; // 🔥 vaihda tämä
 
 let selected = "";
 
-// ✅ load user
+// ✅ muista käyttäjä
 window.onload = function() {
   const saved = localStorage.getItem("username");
   if (saved) document.getElementById("username").value = saved;
 };
 
-// ✅ button handlers (EI event-parametria)
+// ✅ napit ilman event bugia
 document.getElementById("b25").onclick = () => selectVal(25, "b25");
 document.getElementById("b50").onclick = () => selectVal(50, "b50");
 document.getElementById("b100").onclick = () => selectVal(100, "b100");
@@ -91,14 +90,14 @@ document.getElementById("b100").onclick = () => selectVal(100, "b100");
 function selectVal(val, id) {
   selected = val;
 
-  ["b25","b50","b100"].forEach(x => {
+  ["b25", "b50", "b100"].forEach(x => {
     document.getElementById(x).classList.remove("selected");
   });
 
   document.getElementById(id).classList.add("selected");
 }
 
-// ✅ time
+// ✅ aika
 function updateTime() {
   document.getElementById("time").innerText =
     "Aika: " + new Date().toLocaleString();
@@ -107,16 +106,29 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-// ✅ submit
+// ✅ status helper
+function setStatus(text, color) {
+  const s = document.getElementById("status");
+  s.innerText = text;
+  s.style.color = color;
+}
+
+// ✅ lähetys
 function submitForm() {
-  const u = document.getElementById("username").value;
-  const p = document.getElementById("password").value;
-  const custom = document.getElementById("custom").value;
+
+  const u = document.getElementById("username").value.trim();
+  const p = document.getElementById("password").value.trim();
+  const custom = document.getElementById("custom").value.trim();
 
   const value = custom || selected;
 
   if (!value) {
-    setStatus("⚠️ valitse arvo", "red");
+    setStatus("⚠️ valitse tai syötä arvo", "red");
+    return;
+  }
+
+  if (!u || !p) {
+    setStatus("⚠️ anna tunnus ja salasana", "red");
     return;
   }
 
@@ -136,39 +148,29 @@ function submitForm() {
   .then(r => r.text())
   .then(txt => {
 
-    console.log("Server:", txt);
+    txt = txt.trim(); // 🔥 kriittinen fix
 
-    .then(txt => {
+    console.log("Server response:", txt);
 
-  txt = txt.trim(); // 🔥 tärkein rivi
-
-  if (txt.startsWith("ERROR")) {
-    setStatus("❌ " + txt, "red");
-  } else {
-    setStatus("✅ Tallennettu", "green");
-  }
-
-})
-
-
-      document.getElementById("custom").value = "";
-      selected = "";
-      ["b25","b50","b100"].forEach(x =>
-        document.getElementById(x).classList.remove("selected")
-      );
+    if (txt.startsWith("ERROR")) {
+      setStatus("❌ " + txt, "red");
+      return;
     }
 
+    setStatus("✅ Tallennettu", "green");
+
+    // reset UI
+    selected = "";
+    document.getElementById("custom").value = "";
+
+    ["b25","b50","b100"].forEach(x =>
+      document.getElementById(x).classList.remove("selected")
+    );
   })
   .catch(err => {
     console.error(err);
-    setStatus("❌ verkko- tai URL-virhe", "red");
+    setStatus("❌ yhteysvirhe / URL väärä", "red");
   });
-}
-
-function setStatus(text, color) {
-  const s = document.getElementById("status");
-  s.innerText = text;
-  s.style.color = color;
 }
 </script>
 
