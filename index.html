@@ -139,17 +139,17 @@ function send() {
   .then(txt => {
     txt = txt.trim();
 
-    if (txt.startsWith("ERROR")) {
-  setStatus("❌ " + txt, "red");
-} else {
-  setStatus(
-    "✅ Tallennettu " +
-    selectedValue +
-    " / " +
-    (custom || "-"),
-    "green"
+  if (txt.startsWith("ERROR")) {
+    setStatus("❌ " + txt, "red");
+  } else {
+    setStatus(
+      "✅ Tallennettu " +
+      selectedValue +
+      " / " +
+      (custom || "-"),
+      "green"
   );
-}
+  }
 
       // reset UI
       selectedValue = "";
