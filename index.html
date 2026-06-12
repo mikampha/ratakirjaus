@@ -8,7 +8,7 @@
     body {
       font-family: Arial;
       text-align: center;
-      padding: 25px;
+      padding: 20px;
     }
 
     h2 {
@@ -19,7 +19,7 @@
       font-size: 18px;
       padding: 10px;
       width: 220px;
-      margin: 5px;
+      margin: 6px;
     }
 
     .buttons button {
@@ -29,11 +29,17 @@
       width: 100px;
       border: none;
       background: #ddd;
+      border-radius: 6px;
     }
 
     .buttons button.selected {
       background: #4CAF50;
       color: white;
+    }
+
+    .time {
+      margin: 10px;
+      font-size: 18px;
     }
 
     .submit {
@@ -42,8 +48,8 @@
       padding: 15px 30px;
     }
 
-    .time {
-      margin: 10px;
+    #status {
+      margin-top: 10px;
       font-size: 18px;
     }
   </style>
@@ -77,8 +83,95 @@
 
 <br>
 
-<button class="submit" onclick="submit()">Lähetä</button>
+<button class="submit" onclick="submitForm()">Lähetä</button>
 
 <p id="status"></p>
 
 <script>
+  const URL = "https://script.google.com/macros/s/AKfycbwb32UyKkM7oIkZLODUb9gh0m3I3H2eo15Wqe2q0LCfLAd2zrfkOt3SVmdumpj-whuelg/exec"; // 🔥 VAIHDA TÄMÄ
+
+  let selected = "";
+
+  // 🔐 muista username selaimessa
+  window.onload = function() {
+    const savedUser = localStorage.getItem("username");
+    if (savedUser) {
+      document.getElementById("username").value = savedUser;
+    }
+  };
+
+  // 🔘 nappivalinta
+  function selectVal(val, e) {
+    selected = val;
+
+    document.querySelectorAll(".buttons button").forEach(btn => {
+      btn.classList.remove("selected");
+    });
+
+    e.target.classList.add("selected");
+  }
+
+  // 🕒 kellonaika
+  function updateTime() {
+    const now = new Date();
+    document.getElementById("time").innerText =
+      "Aika: " + now.toLocaleString();
+  }
+
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // 🚀 submit
+  function submitForm() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const custom = document.getElementById("custom").value;
+
+    const value = custom || selected;
+
+    if (!value) {
+      document.getElementById("status").innerText =
+        "⚠️ Valitse tai syötä arvo";
+      return;
+    }
+
+    // ✅ tallenna käyttäjä selaimeen
+    localStorage.setItem("username", username);
+
+    const now = new Date().toISOString();
+
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body:
+        "user=" + encodeURIComponent(username) +
+        "&pass=" + encodeURIComponent(password) +
+        "&value=" + encodeURIComponent(value) +
+        "&time=" + encodeURIComponent(now)
+    })
+    .then(r => r.text())
+    .then(() => {
+      document.getElementById("status").innerText =
+        "✅ Tallennettu";
+
+      document.getElementById("custom").value = "";
+
+      // poistetaan valinta UI:sta
+      document.querySelectorAll(".buttons button").forEach(btn => {
+        btn.classList.remove("selected");
+      });
+
+      selected = "";
+    })
+    .catch(() => {
+      document.getElementById("status").innerText =
+        "❌ Virhe lähetyksessä";
+    });
+  }
+</script>
+
+</body>
+</html>
+``
