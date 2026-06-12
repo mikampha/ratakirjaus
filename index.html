@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ratakirjaus3</title>
+  <title>Ratakirjaus4</title>
 
   <style>
     body {
@@ -49,7 +49,7 @@
 
 <body>
 
-<h2>Ratakirjaus3</h2>
+<h2>Ratakirjaus4</h2>
 
 <input id="username" placeholder="tunnus"><br>
 <input id="password" type="password" placeholder="salasana"><br>
@@ -113,15 +113,14 @@ function setStatus(text, color) {
   s.style.color = color;
 }
 
-// ✅ lähetys
 function submitForm() {
 
   const u = document.getElementById("username").value.trim();
   const p = document.getElementById("password").value.trim();
-  const custom = document.getElementById("custom").value.trim();
+  const custom = document.getElementById("custom").value;
 
-  const value = custom !== "" ? custom : selected;
-
+  const customVal = custom.trim();
+  const value = customVal !== "" ? customVal : selected;
 
   if (!value) {
     setStatus("⚠️ valitse tai syötä arvo", "red");
@@ -148,10 +147,7 @@ function submitForm() {
   })
   .then(r => r.text())
   .then(txt => {
-
-    txt = txt.trim(); // 🔥 kriittinen fix
-
-    console.log("Server response:", txt);
+    txt = txt.trim();
 
     if (txt.startsWith("ERROR")) {
       setStatus("❌ " + txt, "red");
@@ -160,20 +156,18 @@ function submitForm() {
 
     setStatus("✅ Tallennettu", "green");
 
-    // reset UI
+    // reset
     selected = "";
     document.getElementById("custom").value = "";
 
-    ["b25","b50","b100"].forEach(x =>
-      document.getElementById(x).classList.remove("selected")
+    ["b25","b50","b100"].forEach(id =>
+      document.getElementById(id).classList.remove("selected")
     );
   })
-  .catch(err => {
-    console.error(err);
-    setStatus("❌ yhteysvirhe / URL väärä", "red");
+  .catch(() => {
+    setStatus("❌ yhteysvirhe", "red");
   });
-}
-</script>
+}</script>
 
 </body>
 </html>
