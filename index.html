@@ -114,13 +114,14 @@ function choose(val, btn) {
   btn.classList.add("selected");
 }
 
-function setStatus(text, color, preset, custom) {
+function setStatus(text, color, preset, custom, txt) {
   const statusEl = document.getElementById("status");
 
   statusEl.innerHTML = `
     <span style="color:${color}">${text}</span><br>
     Matka: ${preset}<br>
-    Määrä: ${custom}
+    Määrä: ${custom}<br><br>
+    ${txt}
   `;
 }
 
@@ -164,9 +165,9 @@ function send() {
     txt = txt.trim();
 
     if (txt.startsWith("ERROR")) {
-      setStatus("❌ " + txt, "red", "-", "-");
+      setStatus("❌ " + txt, "red", "-", "-", "-");
     } else {
-      setStatus("✅ Tallennettu " + txt + " ", "green", selectedValue, custom);
+      setStatus("✅ Tallennettu ", "green", selectedValue, custom, txt);
 
       // reset
       selectedValue = "";
