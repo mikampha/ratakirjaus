@@ -118,6 +118,16 @@ function setStatus(text, color, preset, custom, txt) {
   const statusEl = document.getElementById("status");
 
 
+  // poimitaan aika stringistä
+  const match = txt.match(/aika=(.*)/);
+  
+  if (match) {
+    const formatted = formatDate(match[1]);
+    txt = txt.replace(match[1], formatted);
+  }
+
+
+  
  statusEl.innerHTML = `
     <span style="color:${color}">
       ${text} — Matka: ${preset}, Määrä: ${custom}
