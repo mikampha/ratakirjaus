@@ -117,12 +117,15 @@ function choose(val, btn) {
 function setStatus(text, color, preset, custom, txt) {
   const statusEl = document.getElementById("status");
 
-  statusEl.innerHTML = `
-    <span style="color:${color}">${text}</span><br>
-    Matka: ${preset}<br>
-    Määrä: ${custom}<br><br>
+
+ statusEl.innerHTML = `
+    <span style="color:${color}">
+      ${text} — Matka: ${preset}, Määrä: ${custom}
+    </span>
+    <br>
     ${txt}
   `;
+
 }
 
 // lähetys
