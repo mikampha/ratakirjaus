@@ -48,6 +48,23 @@ input {
   font-weight: bold;
   font-size: 18px;
 }
+
+/* 🔄 Spinner */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 
@@ -71,13 +88,13 @@ input {
 <p>Määrä:</p>
 <input id="custom" type="number" placeholder="esim. 42">
 
-<br>
+<br><br>
 <button class="submit" onclick="send()">Lähetä</button>
 
 <p id="status"></p>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbxWMzDp2BK3PPjR5jg9okSxiNNZgcOeuf3A5LxLqPkDIf2-xq56Onsw_01HekuwK0XjFQ/exec"; // 🔥 vaihda tähän
+const URL = "1H-aYkgxgjizxgzs1S0Jl2-HSsJDjRK8clYk5mq8WNpA"; // 🔥 vaihda tähän
 
 let selectedValue = "";
 
@@ -123,6 +140,12 @@ function send() {
     setStatus("⚠️ anna tunnus ja salasana", "red");
     return;
   }
+
+  // 🔥 ODOTUS-STATUS
+  document.getElementById("status").innerHTML = `
+    <span style="color:#555">⏳ Lähetetään...</span>
+    <span class="spinner"></span>
+  `;
 
   fetch(URL, {
     method: "POST",
