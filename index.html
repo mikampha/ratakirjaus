@@ -166,7 +166,7 @@ function send() {
     if (txt.startsWith("ERROR")) {
       setStatus("❌ " + txt, "red", "-", "-");
     } else {
-      setStatus("✅ Tallennettu", "green", selectedValue, custom, txt);
+      setStatus("✅ Tallennettu " + txt + " ", "green", selectedValue, custom);
 
       // reset
       selectedValue = "";
