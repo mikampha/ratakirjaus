@@ -232,37 +232,48 @@ async function laheta() {
 
     try {
 
-        const response = await fetch(
-            WEBAPP_URL,
-            {
-                method: "POST",
-                headers:{
-                    "Content-Type":"text/plain;charset=utf-8"
-                },
-                body: JSON.stringify(data)
-            }
-        );
-
-        const result = await response.text();
-
-        if(result === "OK"){
-            document.getElementById("status").innerHTML =
-            "✅ Tiedot tallennettu onnistuneesti";
-        } else {
-            document.getElementById("status").innerHTML =
-            "✅ Lähetetty";
-        }
-
-        document.getElementById("laukaukset").value = "";
-
+const response = await fetch(
+    WEBAPP_URL,
+    {
+        method:"POST",
+        headers:{
+            "Content-Type":"text/plain;charset=utf-8"
+        },
+        body:JSON.stringify(data)
     }
-    catch(error){
+);
 
-        console.error(error);
-
-        document.getElementById("status").innerHTML =
-        "❌ Tallennus epäonnistui";
+const response = await fetch(
+    WEBAPP_URL,
+    {
+        method:"POST",
+        headers:{
+            "Content-Type":"text/plain;charset=utf-8"
+        },
+        body:JSON.stringify(data)
     }
+);
+
+const result = await response.text();
+
+if(result === "OK"){
+
+    document.getElementById("status").innerHTML =
+        "✅ Tiedot tallennettu";
+
+} else if(result === "VIRHEELLINEN PIN"){
+
+    document.getElementById("status").innerHTML =
+        "❌ Virheellinen PIN-koodi";
+
+    return;
+
+} else {
+
+    document.getElementById("status").innerHTML =
+        "❌ Virhe: " + result;
+
+    return;
 }
 
 </script>
