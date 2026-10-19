@@ -143,6 +143,15 @@ button:hover{
     </select>
 
     <label>
+        Maksettu <span class="required">*</span>
+    </label>
+    <select id="maksettu" required>
+        <option value="">Valitse maksutapa</option>
+        <option value="Pankkisiirto">Pankkisiirto</option>
+        <option value="Käteinen">Käteinen</option>
+    </select>
+
+    <label>
         Asetyyppi <span class="required">*</span>
     </label>
     <select id="asetyyppi" required>
@@ -186,6 +195,7 @@ async function laheta() {
         sahkoposti: document.getElementById("sahkoposti").value,
         paivamaara: document.getElementById("paivamaara").value,
         rata: document.getElementById("rata").value,
+        maksettu: document.getElementById("maksettu").value,
         asetyyppi: document.getElementById("asetyyppi").value,
         laukaukset: document.getElementById("laukaukset").value
     };
@@ -194,6 +204,7 @@ async function laheta() {
         !data.nimi ||
         !data.sahkoposti ||
         !data.rata ||
+        !data.maksettu ||
         !data.asetyyppi ||
         !data.laukaukset
     ){
@@ -239,7 +250,7 @@ async function laheta() {
 </html>
 
 
-<!--const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec"; -->
+<!--const WEBAPP_URL =
+"https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec"; -->
 
 
