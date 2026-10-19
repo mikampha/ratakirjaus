@@ -7,7 +7,6 @@
 <title>Ratapäiväkirja</title>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -96,10 +95,9 @@ button:hover{
 .required{
     color:#e53935;
 }
-
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="card">
@@ -143,12 +141,19 @@ button:hover{
     </select>
 
     <label>
-        Maksettu <span class="required">*</span>
+        Maksutapa <span class="required">*</span>
     </label>
     <select id="maksettu" required>
         <option value="">Valitse maksutapa</option>
-        <option value="Pankkisiirto">Pankkisiirto</option>
-        <option value="Käteinen">Käteinen</option>
+        <option value="Ratamaksu kaudelta maksettu">
+            Ratamaksu kaudelta maksettu
+        </option>
+        <option value="Pankkisiirto">
+            Pankkisiirto
+        </option>
+        <option value="Käteinen">
+            Käteinen
+        </option>
     </select>
 
     <label>
@@ -182,6 +187,7 @@ button:hover{
 
 <script>
 
+/* VAIHDA TÄMÄN PAIKALLE OMA APPS SCRIPT WEB APP URL */
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec";
 
@@ -221,23 +227,30 @@ async function laheta() {
         const response = await fetch(
             WEBAPP_URL,
             {
-                method:"POST",
+                method: "POST",
                 headers:{
                     "Content-Type":"text/plain;charset=utf-8"
                 },
-                body:JSON.stringify(data)
+                body: JSON.stringify(data)
             }
         );
 
         const result = await response.text();
 
-        document.getElementById("status").innerHTML =
-        "✅ Tiedot tallennettu";
+        if(result === "OK"){
+            document.getElementById("status").innerHTML =
+            "✅ Tiedot tallennettu onnistuneesti";
+        } else {
+            document.getElementById("status").innerHTML =
+            "✅ Lähetetty";
+        }
 
         document.getElementById("laukaukset").value = "";
 
     }
     catch(error){
+
+        console.error(error);
 
         document.getElementById("status").innerHTML =
         "❌ Tallennus epäonnistui";
