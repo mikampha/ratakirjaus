@@ -191,7 +191,7 @@ button:hover{
 <script>
 
 const WEBAPP_URL =
-"https://script.google.com/macros/s/AKfycbxU4GJwK6mf3EG_UkdfEEQVPy5gv9l_8_mzZsnhushJN1C_ssTpctmW6EcvHgLwJcbBQg/exec";
+"https://script.google.com/macros/s/AKfycbzBcAD6EoKZr3dJJV0r3Rd0Pch--BsPZ4G9OycQNwoGvp-Amc7VB098yfzuAfftnC7qYQ/exec";
 
 // Oletuspäivä
 document.getElementById("paivamaara").value =
@@ -251,6 +251,10 @@ async function laheta() {
 
         const result = await response.text();
 
+        console.log(result);
+
+        document.getElementById("status").innerHTML = result;
+
         if (result === "OK") {
 
             document.getElementById("status").innerHTML =
@@ -292,8 +296,5 @@ async function laheta() {
 </body>
 </html>
 
-
-<!--const WEBAPP_URL =
-"https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec"; -->
 
 
