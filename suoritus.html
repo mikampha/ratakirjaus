@@ -1,64 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
 <meta charset="UTF-8">
-<title>Sähköpostivahvistus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Ratapäiväkirja</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#eef2f7;
+    padding:15px;
+}
+
+.card{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:28px;
+    color:#1a365d;
+    margin-bottom:5px;
+}
+
+.header p{
+    color:#666;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    margin-bottom:6px;
+    font-weight:600;
+    color:#333;
+}
+
+input,
+select{
+    width:100%;
+    padding:14px;
+    border:1px solid #d0d7de;
+    border-radius:12px;
+    font-size:16px;
+    background:#fafafa;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#1e88e5;
+    background:white;
+}
+
+button{
+    width:100%;
+    margin-top:28px;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:#1e88e5;
+    color:white;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1669bb;
+}
+
+#status{
+    text-align:center;
+    margin-top:15px;
+    font-weight:600;
+}
+
+.required{
+    color:#e53935;
+}
+
+</style>
 </head>
+
 <body>
 
-<h2>Vahvista sähköpostiosoitteesi</h2>
+<div class="card">
 
-<input
-    type="email"
-    id="email"
-    placeholder="Sähköpostiosoite"
-    required>
+    <div class="header">
+        <h1>🎯 Ratapäiväkirja</h1>
+        <p>Kirjaa ratakäyntisi ja laukausmäärät</p>
+    </div>
 
-<button onclick="sendVerification()">
-    Lähetä vahvistuslinkki
-</button>
+    <label>
+        Nimi <span class="required">*</span>
+    </label>
+    <input
+        type="text"
+        id="nimi"
+        placeholder="Etu- ja sukunimi"
+        required>
 
-<p id="status"></p>
+    <label>
+        Sähköposti <span class="required">*</span>
+    </label>
+    <input
+        type="email"
+        id="sahkoposti"
+        placeholder="nimi@example.fi"
+        required>
+
+    <label>Päivämäärä</label>
+    <input
+        type="date"
+        id="paivamaara">
+
+    <label>
+        Rata <span class="required">*</span>
+    </label>
+    <select id="rata" required>
+        <option value="">Valitse rata</option>
+        <option value="25m">25 m</option>
+        <option value="50m">50 m</option>
+        <option value="100m">100 m</option>
+    </select>
+
+    <label>
+        Asetyyppi <span class="required">*</span>
+    </label>
+    <select id="asetyyppi" required>
+        <option value="">Valitse asetyyppi</option>
+        <option value="Kivääri">Kivääri</option>
+        <option value="Pienoiskivääri">Pienoiskivääri</option>
+        <option value="Pistooli">Pistooli</option>
+        <option value="Pienoispistooli">Pienoispistooli</option>
+    </select>
+
+    <label>
+        Laukausmäärä <span class="required">*</span>
+    </label>
+    <input
+        type="number"
+        id="laukaukset"
+        min="0"
+        placeholder="Esim. 100"
+        required>
+
+    <button onclick="laheta()">
+        Lähetä raportti
+    </button>
+
+    <div id="status"></div>
+
+</div>
 
 <script>
 
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec";
 
+document.getElementById("paivamaara").value =
+new Date().toISOString().split("T")[0];
 
-async function sendVerification() {
+async function laheta() {
 
-    const email =
-        document.getElementById("email").value;
+    const data = {
+        nimi: document.getElementById("nimi").value,
+        sahkoposti: document.getElementById("sahkoposti").value,
+        paivamaara: document.getElementById("paivamaara").value,
+        rata: document.getElementById("rata").value,
+        asetyyppi: document.getElementById("asetyyppi").value,
+        laukaukset: document.getElementById("laukaukset").value
+    };
 
-    document.getElementById("status").textContent =
-        "Lähetetään...";
+    if(
+        !data.nimi ||
+        !data.sahkoposti ||
+        !data.rata ||
+        !data.asetyyppi ||
+        !data.laukaukset
+    ){
+        document.getElementById("status").innerHTML =
+        "⚠️ Täytä kaikki pakolliset kentät";
+        return;
+    }
+
+    document.getElementById("status").innerHTML =
+    "⏳ Tallennetaan...";
 
     try {
 
         const response = await fetch(
             WEBAPP_URL,
             {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
+                method:"POST",
+                headers:{
+                    "Content-Type":"text/plain;charset=utf-8"
                 },
-                body: JSON.stringify({
-                    action: "sendVerification",
-                    email: email
-                })
+                body:JSON.stringify(data)
             }
         );
 
         const result = await response.text();
 
-        document.getElementById("status").textContent =
-            result;
+        document.getElementById("status").innerHTML =
+        "✅ Tiedot tallennettu";
 
-    } catch (error) {
+        document.getElementById("laukaukset").value = "";
 
-        document.getElementById("status").textContent =
-            "Virhe: " + error.message;
+    }
+    catch(error){
+
+        document.getElementById("status").innerHTML =
+        "❌ Tallennus epäonnistui";
     }
 }
 
@@ -66,6 +237,7 @@ async function sendVerification() {
 
 </body>
 </html>
+
 
 <!--const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec"; -->
