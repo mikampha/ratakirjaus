@@ -241,8 +241,8 @@ async function laheta() {
     try {
 
         //näytä mitä lähtee
-        console.log(data);
-        alert(JSON.stringify(data));
+        //console.log(data);
+        //alert(JSON.stringify(data));
         
         const response = await fetch(
             WEBAPP_URL,
@@ -257,7 +257,7 @@ async function laheta() {
 
         const result = await response.text();
 
-        console.log(result);
+        //console.log(result);
 
         document.getElementById("status").innerHTML = result;
 
