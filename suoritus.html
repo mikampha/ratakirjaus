@@ -5,16 +5,16 @@
 async function sendLink() {
   const email = document.getElementById("email").value;
 
-  await fetch(
-    "https://script.google.com/macros/s/WEBAPP_ID/exec",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        action: "sendLink",
-        email: email
-      })
-    }
-  );
+ await fetch(WEBAPP_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    action: "sendLink",
+    email: email
+  })
+});
 
   alert("Vahvistuslinkki lähetetty.");
 }
