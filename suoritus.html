@@ -1,6 +1,10 @@
 <input type="email" id="email" placeholder="Sähköposti">
 <button onclick="sendLink()">Lähetä vahvistuslinkki</button>
 
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbw74dpua_GNYzuZAmkoNFmeRUD5NHHpFGWYk7xZdb39N4j4qxymQoo7wmsuElbihLjH-Q/exec";
+
+
 <script>
 async function sendLink() {
   const email = document.getElementById("email").value;
