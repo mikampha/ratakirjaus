@@ -190,19 +190,25 @@ button:hover{
 
 <script>
 
-/* VAIHDA TÄMÄN PAIKALLE OMA APPS SCRIPT WEB APP URL */
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbzBcAD6EoKZr3dJJV0r3Rd0Pch--BsPZ4G9OycQNwoGvp-Amc7VB098yfzuAfftnC7qYQ/exec";
 
+// Oletuspäivä
 document.getElementById("paivamaara").value =
 new Date().toISOString().split("T")[0];
+
+// Muistetaan nimi ja sähköposti
+document.getElementById("nimi").value =
+localStorage.getItem("nimi") || "";
+
+document.getElementById("sahkoposti").value =
+localStorage.getItem("sahkoposti") || "";
 
 async function laheta() {
 
     const data = {
-       
-        nimi: document.getElementById("nimi").value,
-        sahkoposti: document.getElementById("sahkoposti").value,
+        nimi: document.getElementById("nimi").value.trim(),
+        sahkoposti: document.getElementById("sahkoposti").value.trim(),
         paivamaara: document.getElementById("paivamaara").value,
         rata: document.getElementById("rata").value,
         maksettu: document.getElementById("maksettu").value,
@@ -210,66 +216,75 @@ async function laheta() {
         laukaukset: document.getElementById("laukaukset").value
     };
 
-    if(
+    if (
         !data.nimi ||
         !data.sahkoposti ||
         !data.rata ||
         !data.maksettu ||
         !data.asetyyppi ||
         !data.laukaukset
-    ){
+    ) {
         document.getElementById("status").innerHTML =
         "⚠️ Täytä kaikki pakolliset kentät";
         return;
     }
+
+    // Tallennetaan selaimeen seuraavaa kertaa varten
+    localStorage.setItem("nimi", data.nimi);
+    localStorage.setItem("sahkoposti", data.sahkoposti);
 
     document.getElementById("status").innerHTML =
     "⏳ Tallennetaan...";
 
     try {
 
-const response = await fetch(
-    WEBAPP_URL,
-    {
-        method:"POST",
-        headers:{
-            "Content-Type":"text/plain;charset=utf-8"
-        },
-        body:JSON.stringify(data)
+        const response = await fetch(
+            WEBAPP_URL,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(data)
+            }
+        );
+
+        const result = await response.text();
+
+        if (result === "OK") {
+
+            document.getElementById("status").innerHTML =
+            "✅ Tiedot tallennettu";
+
+            // Tyhjennetään muut kentät mutta jätetään nimi ja sähköposti
+            document.getElementById("rata").value = "";
+            document.getElementById("maksettu").value = "";
+            document.getElementById("asetyyppi").value = "";
+            document.getElementById("laukaukset").value = "";
+
+        }
+        else if (result === "VIRHEELLINEN PIN") {
+
+            document.getElementById("status").innerHTML =
+            "❌ Virheellinen PIN-koodi";
+
+        }
+        else {
+
+            document.getElementById("status").innerHTML =
+            "❌ Virhe: " + result;
+
+        }
+
     }
-);
+    catch (error) {
 
-const response = await fetch(
-    WEBAPP_URL,
-    {
-        method:"POST",
-        headers:{
-            "Content-Type":"text/plain;charset=utf-8"
-        },
-        body:JSON.stringify(data)
+        console.error(error);
+
+        document.getElementById("status").innerHTML =
+        "❌ Yhteysvirhe palvelimeen";
+
     }
-);
-
-const result = await response.text();
-
-if(result === "OK"){
-
-    document.getElementById("status").innerHTML =
-        "✅ Tiedot tallennettu";
-
-} else if(result === "VIRHEELLINEN PIN"){
-
-    document.getElementById("status").innerHTML =
-        "❌ Virheellinen PIN-koodi";
-
-    return;
-
-} else {
-
-    document.getElementById("status").innerHTML =
-        "❌ Virhe: " + result;
-
-    return;
 }
 
 </script>
