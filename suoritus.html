@@ -110,7 +110,14 @@ button:hover{
     </div>
 
 
-
+    <label>
+        PIN <span class="required">*</span>
+    </label>
+    <input
+        type="text"
+        id="pin"
+        placeholder="pin-koodi"
+        required>
   
     <label>
         Nimi <span class="required">*</span>
@@ -209,6 +216,7 @@ localStorage.getItem("sahkoposti") || "";
 async function laheta() {
 
     const data = {
+        pin: document.getElementById("pin").value.trim(),
         nimi: document.getElementById("nimi").value.trim(),
         sahkoposti: document.getElementById("sahkoposti").value.trim(),
         paivamaara: document.getElementById("paivamaara").value,
@@ -219,6 +227,7 @@ async function laheta() {
     };
 
     if (
+        !data.pin ||
         !data.nimi ||
         !data.sahkoposti ||
         !data.rata ||
