@@ -1,0 +1,21 @@
+<input type="email" id="email" placeholder="Sähköposti">
+<button onclick="sendLink()">Lähetä vahvistuslinkki</button>
+
+<script>
+async function sendLink() {
+  const email = document.getElementById("email").value;
+
+  await fetch(
+    "https://script.google.com/macros/s/WEBAPP_ID/exec",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        action: "sendLink",
+        email: email
+      })
+    }
+  );
+
+  alert("Vahvistuslinkki lähetetty.");
+}
+</script>
