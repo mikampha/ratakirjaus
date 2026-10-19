@@ -109,11 +109,7 @@ button:hover{
 
 
 
-    <input
-        type="password"
-        id="pin"
-        placeholder="Anna PIN-koodi"
-        required>
+  
     <label>
         Nimi <span class="required">*</span>
     </label>
@@ -204,7 +200,7 @@ new Date().toISOString().split("T")[0];
 async function laheta() {
 
     const data = {
-        pin: document.getElementById("pin").value,
+       
         nimi: document.getElementById("nimi").value,
         sahkoposti: document.getElementById("sahkoposti").value,
         paivamaara: document.getElementById("paivamaara").value,
