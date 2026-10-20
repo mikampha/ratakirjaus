@@ -273,8 +273,9 @@ async function laheta() {
         if (result === "OK") {
 
             document.getElementById("status").innerHTML =
-            "✅ Tiedot tallennettu";
+            "✅ Tiedot tallennettu" + nimi + paivamaara + laukaukset;
 
+            
             // Tyhjennetään muut kentät mutta jätetään nimi ja sähköposti
             document.getElementById("rata").value = "";
             document.getElementById("maksettu").value = "";
