@@ -279,10 +279,12 @@ async function laheta() {
             document.getElementById("status").innerHTML =
                 "✅ Tiedot tallennettu ja sait kirjauksesta vahvistussähköpostin.";
 
+
             document.getElementById("rata").value = "";
             document.getElementById("maksettu").value = "";
             document.getElementById("laukaukset").value = "";
-            document.getElementById("pin").value = "";
+            //document.getElementById("pin").value = "";
+
         }
         else if (result === "VIRHEELLINEN PIN") {
 
