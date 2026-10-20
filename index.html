@@ -188,10 +188,31 @@ button:disabled{
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbyLGFluyr9gRwEn4IimxoYRBpZ2nLC7J__HW_s7U47aQAyLhgie0KX3iBzEexjYkJpY/exec";
 
-// Oletuspäivä
-document.getElementById("paivamaara").value =
-new Date().toISOString().split("T")[0];
 
+    
+
+// Oletuspäivä
+//document.getElementById("paivamaara").value =
+//new Date().toISOString().split("T")[0];
+
+//pvm rajat
+const pvmKentta = document.getElementById("paivamaara");
+
+const tanaan = new Date();
+
+const viikkoSitten = new Date();
+viikkoSitten.setDate(tanaan.getDate() - 7);
+
+const formatDate = d => d.toISOString().split("T")[0];
+
+pvmKentta.max = formatDate(tanaan);        // ei tulevat päivät
+pvmKentta.min = formatDate(viikkoSitten);  // max 7 päivää vanha
+
+pvmKentta.value = formatDate(tanaan);      // oletuksena tänään    
+
+
+
+    
 // Muista tiedot
 //document.getElementById("pin").value =
 //localStorage.getItem("pin") || "";
@@ -249,6 +270,26 @@ async function laheta() {
         return;
     }
 
+
+    //pvm rajat
+    const valittuPvm = new Date(data.paivamaara);
+    
+    const tanaan = new Date();
+    tanaan.setHours(23,59,59,999);
+    
+    const viikkoSitten = new Date();
+    viikkoSitten.setDate(viikkoSitten.getDate() - 7);
+    viikkoSitten.setHours(0,0,0,0);
+    
+    if (valittuPvm < viikkoSitten || valittuPvm > tanaan) {
+        document.getElementById("status").innerHTML =
+            "⚠️ Ampumispäivä voi olla enintään 7 päivää vanha.";
+        return;
+    }
+
+
+
+    
     //localStorage.setItem("pin", data.pin);
     localStorage.setItem("nimi", data.nimi);
     localStorage.setItem("sahkoposti", data.sahkoposti);
