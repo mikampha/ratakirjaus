@@ -272,15 +272,15 @@ async function laheta() {
 
         if (result === "OK") {
 
-            document.getElementById("status").innerHTML =
-            "✅ Tiedot tallennettu" + nimi + paivamaara + laukaukset;
+            const rata = document.getElementById("rata").value;
+            const maksettu = document.getElementById("maksettu").value;
+            const laukaukset = document.getElementById("laukaukset").value;
 
-            
-            // Tyhjennetään muut kentät mutta jätetään nimi ja sähköposti
-            document.getElementById("rata").value = "";
-            document.getElementById("maksettu").value = "";
-            //document.getElementById("asetyyppi").value = "";
-            document.getElementById("laukaukset").value = "";
+            document.getElementById("status").innerHTML = `
+                ✅ Kiitos. Tiedot tallennettu<br>
+                Rata: <b>${rata}</b><br>
+                Maksu: <b>${maksettu}</b><br>
+                Laukauksia: <b>${laukaukset}</b>
 
         }
         else if (result === "VIRHEELLINEN PIN") {
