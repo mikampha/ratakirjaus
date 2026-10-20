@@ -193,8 +193,8 @@ document.getElementById("paivamaara").value =
 new Date().toISOString().split("T")[0];
 
 // Muista tiedot
-document.getElementById("pin").value =
-localStorage.getItem("pin") || "";
+//document.getElementById("pin").value =
+//localStorage.getItem("pin") || "";
     
 document.getElementById("nimi").value =
 localStorage.getItem("nimi") || "";
@@ -249,7 +249,7 @@ async function laheta() {
         return;
     }
 
-    localStorage.setItem("pin", data.pin);
+    //localStorage.setItem("pin", data.pin);
     localStorage.setItem("nimi", data.nimi);
     localStorage.setItem("sahkoposti", data.sahkoposti);
 
