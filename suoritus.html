@@ -16,51 +16,47 @@
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     background:#eef2f7;
-    padding:15px;
+    padding:8px;
 }
 
 .card{
-    max-width:600px;
+    max-width:480px;
     margin:auto;
-    background:white;
+    background:#fff;
     border:1px solid #000;
-    border-radius:0;
-    padding:24px;
-    box-shadow:none;
+    padding:16px;
 }
 
 .header{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:20px;
 }
 
 .header h1{
     font-size:28px;
     color:#1a365d;
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .header p{
     color:#666;
-    font-size:16px;
+    font-size:15px;
 }
 
 label{
     display:block;
-    margin-top:18px;
+    margin-top:16px;
     margin-bottom:6px;
     font-weight:600;
-    color:#333;
 }
 
-    
 input,
 select{
     width:100%;
-    padding:14px;
-    border:1px solid #000;
-    border-radius:0px;
-    font-size:16px;
+    min-height:52px;
+    padding:14px 16px;
+    border:2px solid #000;
+    font-size:18px;
     background:#fff;
 }
 
@@ -68,63 +64,65 @@ input:focus,
 select:focus{
     outline:none;
     border-color:#1e88e5;
-    background:white;
 }
 
 button{
     width:100%;
-    margin-top:28px;
-    padding:16px;
+    min-height:60px;
+    margin-top:24px;
     border:none;
-    border-radius:0px;
     background:#1e88e5;
     color:white;
-    font-size:18px;
-    font-weight:600;
+    font-size:20px;
+    font-weight:700;
     cursor:pointer;
 }
 
-button:hover{
-    background:#1669bb;
+button:disabled{
+    background:#999;
 }
 
 #status{
     text-align:center;
     margin-top:15px;
-    font-weight:600;
+    font-size:18px;
+    font-weight:700;
+    min-height:30px;
 }
 
 .required{
-    color:#e53935;
+    color:#d32f2f;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="card">
 
     <div class="header">
         <h1>Ratakirjaus</h1>
-        <p>Kirjaa päivän ratakäyntisi ja laukausmäärä</p>
+        <p>Kirjaa ratakäyntisi</p>
     </div>
-
 
     <label>
         PIN <span class="required">*</span>
     </label>
     <input
-        type="text"
+        type="password"
         id="pin"
-        placeholder="pin-koodi"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="PIN-koodi"
         required>
-  
+
     <label>
         Ampujan nimi <span class="required">*</span>
     </label>
     <input
         type="text"
         id="nimi"
+        autocomplete="name"
         placeholder="Sukunimi Etunimi"
         required>
 
@@ -134,10 +132,13 @@ button:hover{
     <input
         type="email"
         id="sahkoposti"
+        autocomplete="email"
         placeholder="nimi@example.fi"
         required>
 
-    <label>Ampumispäivämäärä</label>
+    <label>
+        Ampumispäivä
+    </label>
     <input
         type="date"
         id="paivamaara">
@@ -157,45 +158,26 @@ button:hover{
     </label>
     <select id="maksettu" required>
         <option value="">Valitse maksutapa</option>
-        <option value="Ratamaksu kaudelta maksettu">
-            Ratamaksu kaudelta maksettu
-        </option>
-        <option value="Pankkisiirto">
-            Pankkisiirto
-        </option>
-        <option value="Käteinen">
-            Käteinen
-        </option>
+        <option value="Kausimaksu">Kausimaksu</option>
+        <option value="Pankkisiirto">Pankkisiirto</option>
+        <option value="Käteinen">Käteinen</option>
     </select>
-
-    <!--label>
-        Asetyyppi <span class="required">*</span>
-    </label-->
-    <!--select id="asetyyppi" required>
-        <option value="">Valitse asetyyppi</option>
-        <option value="Kivääri">Kivääri</option>
-        <option value="Pienoiskivääri">Pienoiskivääri</option>
-        <option value="Pistooli">Pistooli</option>
-        <option value="Pienoispistooli">Pienoispistooli</option>
-    </select-->
 
     <label>
         Laukausmäärä <span class="required">*</span>
     </label>
     <input
-        type="number"
+        type="text"
         id="laukaukset"
-        min="0"
-        max="4999"
         inputmode="numeric"
+        maxlength="4"
         enterkeyhint="done"
-        step="1"
-        pattern="[0-9]*"
-        placeholder="0-5000"
+        autocomplete="off"
+        placeholder="0-4999"
         required>
 
-    <button onclick="laheta()">
-        Lähetä ratakirjausmerkintä
+    <button id="lahetaBtn" onclick="laheta()">
+        Lähetä ratakirjaus
     </button>
 
     <div id="status"></div>
@@ -204,12 +186,6 @@ button:hover{
 
 <script>
 
-//ei pilkkua tms    
-document.getElementById("laukaukset").addEventListener("input", function () {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-    
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbxEyL8tn3S0ntmSyMTl1Z_dKsaTugPFlNUGNBeqxrAXY5TVmm65dMBnkXswawGVrgq9/exec";
 
@@ -217,14 +193,26 @@ const WEBAPP_URL =
 document.getElementById("paivamaara").value =
 new Date().toISOString().split("T")[0];
 
-// Muistetaan nimi ja sähköposti
+// Muista tiedot
 document.getElementById("nimi").value =
 localStorage.getItem("nimi") || "";
 
 document.getElementById("sahkoposti").value =
 localStorage.getItem("sahkoposti") || "";
 
+// Sallitaan vain numerot ja max 4999
+document.getElementById("laukaukset").addEventListener("input", function() {
+
+    this.value = this.value.replace(/\D/g, "");
+
+    if (this.value !== "" && Number(this.value) > 4999) {
+        this.value = "4999";
+    }
+});
+
 async function laheta() {
+
+    const button = document.getElementById("lahetaBtn");
 
     const data = {
         pin: document.getElementById("pin").value.trim(),
@@ -233,7 +221,6 @@ async function laheta() {
         paivamaara: document.getElementById("paivamaara").value,
         rata: document.getElementById("rata").value,
         maksettu: document.getElementById("maksettu").value,
-        //asetyyppi: document.getElementById("asetyyppi").value,
         laukaukset: document.getElementById("laukaukset").value
     };
 
@@ -243,15 +230,13 @@ async function laheta() {
         !data.sahkoposti ||
         !data.rata ||
         !data.maksettu ||
-        //!data.asetyyppi ||
         !data.laukaukset
     ) {
         document.getElementById("status").innerHTML =
-        "⚠️ Täytä kaikki pakolliset kentät";
+            "⚠️ Täytä kaikki pakolliset kentät";
         return;
     }
 
-    // Laukausmäärän tarkistus
     if (
         !/^\d+$/.test(data.laukaukset) ||
         Number(data.laukaukset) > 4999
@@ -262,19 +247,17 @@ async function laheta() {
         return;
     }
 
-    // Tallennetaan selaimeen seuraavaa kertaa varten
     localStorage.setItem("nimi", data.nimi);
     localStorage.setItem("sahkoposti", data.sahkoposti);
 
+    button.disabled = true;
+    button.textContent = "Tallennetaan...";
+
     document.getElementById("status").innerHTML =
-    "⏳ Tallennetaan...";
+        "⏳ Tallennetaan...";
 
     try {
 
-        //näytä mitä lähtee
-        //console.log(data);
-        //alert(JSON.stringify(data));
-        
         const response = await fetch(
             WEBAPP_URL,
             {
@@ -288,74 +271,41 @@ async function laheta() {
 
         const result = await response.text();
 
-        //console.log(result);
-
-        document.getElementById("status").innerHTML = result;
-
         if (result === "OK") {
 
-            document.getElementById("status").innerHTML = 
-            "✅ Kiitos. Tiedot tallennettu";
+            document.getElementById("status").innerHTML =
+                "✅ Kiitos. Tiedot tallennettu";
 
+            document.getElementById("rata").value = "";
+            document.getElementById("maksettu").value = "";
+            document.getElementById("laukaukset").value = "";
+            document.getElementById("pin").value = "";
         }
         else if (result === "VIRHEELLINEN PIN") {
 
             document.getElementById("status").innerHTML =
-            "❌ Virheellinen PIN-koodi";
-
+                "❌ Virheellinen PIN-koodi";
         }
         else {
 
             document.getElementById("status").innerHTML =
-            "❌ Virhe: " + result;
-
+                "❌ Virhe: " + result;
         }
 
     }
     catch (error) {
 
-        console.error(error);
-
         document.getElementById("status").innerHTML =
-        "❌ Yhteysvirhe palvelimeen";
+            "❌ Yhteysvirhe palvelimeen";
+    }
+    finally {
 
+        button.disabled = false;
+        button.textContent = "Lähetä ratakirjaus";
     }
 }
-
-function setStatus(text, color, preset, custom, txt) {
-  const statusEl = document.getElementById("status");
-
-
-  // poimitaan aika stringistä
-  //const match = txt.match(/aika=(.*)/);
-  
-  //if (match) {
-  //  const formatted = formatDate(match[1]);
-  //  txt = txt.replace(match[1], formatted);
-  //}
-
-//no longer needed
-//if (/(\d{2}:\d{2}):\d{2}/.test(txt)) {
-//  txt = txt.replace(/(\d{2}:\d{2}):\d{2}.*/, "$1");
-//}
-
-  
- statusEl.innerHTML = `
-    <span style="color:${color}">
-      ${text} — Matka: ${preset}, Määrä: ${custom}
-    </span>
-    <br>
-    ${txt}
-  `;
-
-}
-
-
 
 </script>
 
 </body>
 </html>
-
-
-
