@@ -204,6 +204,11 @@ button:hover{
 
 <script>
 
+document.getElementById("laukaukset").addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+    
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbxEyL8tn3S0ntmSyMTl1Z_dKsaTugPFlNUGNBeqxrAXY5TVmm65dMBnkXswawGVrgq9/exec";
 
