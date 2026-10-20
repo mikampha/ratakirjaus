@@ -208,6 +208,19 @@ document.getElementById("laukaukset").addEventListener("input", function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
+
+const laukaukset = document.getElementById("laukaukset");
+
+laukaukset.addEventListener("input", function () {
+    const arvo = parseInt(this.value, 10);
+
+    if (arvo > 4999) {
+        this.setCustomValidity("Laukausmäärä voi olla enintään 4999.");
+    } else {
+        this.setCustomValidity("");
+    }
+});
+    
     
 const WEBAPP_URL =
 "https://script.google.com/macros/s/AKfycbxEyL8tn3S0ntmSyMTl1Z_dKsaTugPFlNUGNBeqxrAXY5TVmm65dMBnkXswawGVrgq9/exec";
